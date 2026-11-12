@@ -1,0 +1,98 @@
+# aiboot_result_v1 양식의 필드 속성 기본값 (등록 시 schema.yaml에 병합됨)
+# binding: 코드가 채울 데이터 경로('|'는 대체 경로). 없으면 AI가 작성.
+# 데이터 원천: plan(계획안 구조화), actual(결과자료 구조화), comparison(계획대비실적), survey(만족도 집계), budget(예산), calc(코드 계산값), photos(사진)
+사업단명:
+  binding: plan.사업단명|actual.사업단명
+  guide: "사업단 이름. 예: AI인재양성부트캠프 사업"
+보고서제목:
+  type: paragraph
+  binding: calc.보고서제목
+  guide: "제목 상자 2~3줄. 마지막 줄은 '결과보고'로 끝남"
+추진배경:
+  type: paragraph
+  guide: "2~3개 항목, 각 1~2문장. '~필요', '~하고자 함' 등 명사형/개조식 어미"
+  max_chars: 400
+  source_hint: plan
+추진목적:
+  type: paragraph
+  guide: "2~3개 항목, 각 1~2문장. 개조식(~제고, ~강화, ~확대)"
+  max_chars: 400
+  source_hint: plan
+행사명:
+  binding: actual.행사명|plan.행사명|plan.사업명
+행사일시:
+  type: date
+  binding: calc.행사일시
+장소:
+  binding: actual.장소|plan.장소
+대상:
+  binding: actual.대상|plan.대상
+참여인원:
+  type: number
+  binding: calc.참여인원_표시
+주요추진내용:
+  type: paragraph
+  guide: "실제 운영한 주요 프로그램 2~4개, 각 한 줄 명사형"
+  max_chars: 300
+  source_hint: both
+운영일정:
+  binding: actual.운영일정|plan.세부프로그램
+  guide: "날짜는 같은 날이면 첫 행에만"
+성과제목:
+  type: text
+  guide: "운영 결과를 요약하는 20자 이내 소제목(명사형). 예: 현장 중심 실무 교육 기반 강화"
+  max_chars: 30
+운영결과:
+  type: paragraph
+  guide: "운영 결과 서술 1문단 2~3문장, '~하였습니다' 체. 일시·장소·인원 등 사실 위주"
+  max_chars: 350
+  source_hint: actual
+계획대비실적:
+  binding: comparison.rows
+만족도요약:
+  type: paragraph
+  guide: "만족도 조사 개요 1문단(응답자 수, 전반적 평가). '~도출되었습니다' 체"
+  max_chars: 250
+  source_hint: actual
+조사기간:
+  binding: survey.조사기간
+조사대상:
+  binding: survey.조사대상
+응답자수:
+  binding: survey.응답자수_표시
+조사방법:
+  binding: survey.조사방법
+활용목적:
+  binding: survey.활용목적
+만족도문항:
+  binding: survey.items
+  ai_subfields: [분석]
+  guide: "분석: 제공된 비율·인원 수치만 사용해 1~2문장, '~분석되었습니다/~파악됩니다' 체"
+  max_chars: 200
+주요성과:
+  type: paragraph
+  guide: "3~4개 항목, 각 한 줄. 성과를 명사형으로(~향상, ~확보, ~구축)"
+  max_chars: 400
+  source_hint: both
+향후계획:
+  ai_subfields: [제목, 내용]
+  guide: "2~3개. 제목은 10자 내외 명사형, 내용은 1~2문장 '~합니다' 체"
+  max_chars: 600
+재원:
+  binding: actual.재원|plan.재원
+예산총액:
+  type: number
+  binding: calc.집행총액_표시
+예산집행내역:
+  binding: budget.rows
+예산합계:
+  type: number
+  binding: calc.집행총액_표시
+사진1: {binding: photos.0, required: false}
+사진2: {binding: photos.1, required: false}
+사진3: {binding: photos.2, required: false}
+사진4: {binding: photos.3, required: false}
+사진5: {binding: photos.4, required: false}
+사진6: {binding: photos.5, required: false}
+사진7: {binding: photos.6, required: false}
+사진8: {binding: photos.7, required: false}

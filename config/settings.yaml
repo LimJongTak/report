@@ -1,0 +1,35 @@
+# ReportGen 설정 — 코드 수정 없이 여기서 바꿉니다 (NFR-07)
+llm:
+  model: claude-sonnet-5-5        # 기본 모델. 품질 우선이면 claude-opus-5-5
+  max_tokens: 16000
+  effort: medium                  # low | medium | high
+  max_retries: 4                  # API 오류 시 지수 백오프 재시도 횟수 (NFR-08)
+  json_retries: 2                 # JSON 형식 오류 시 재요청 횟수 (GEN-08)
+  refusal_fallback: true          # 안전 분류기 거절 시 서버측 대체 모델로 재시도
+  parallel_fields: 3              # 필드 동시 생성 수
+  price_per_mtok: {input: 2.0, output: 10.0}   # 예상 비용 표시용 (USD)
+
+privacy:
+  mask_default: true              # AI 전송 전 개인정보 마스킹 기본 ON (NFR-02)
+
+pdf:
+  converters: [hancom, libreoffice]   # 우선순위 (OUT-04)
+  soffice_path: ""                     # 비우면 자동 탐색
+
+ingest:
+  hwp_prefer_hancom: true         # 한컴오피스가 있으면 .hwp → .hwpx 변환 후 추출
+  pdf_vision_fallback: true       # 텍스트가 깨진/스캔 PDF는 Claude 비전으로 읽기
+  max_excerpt_chars: 60000        # 초안 생성 시 원문 발췌 최대 길이
+
+paths:
+  library: library
+  projects: projects
+  prompts: prompts
+
+output:
+  filename: "{date}_{name}_결과보고"   # OUT-05
+
+hancom:
+  timeout: 120                    # 한컴 작업 1건 대기 시간(초)
+  visible: false                  # 자동화 중 한글 창 표시
+  security_module_dll: ""         # 한컴 보안모듈 DLL 경로(파일 접근 승인 창 생략). 예: C:\HNC\FilePathCheckerModuleExample.dll
