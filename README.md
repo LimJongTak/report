@@ -9,12 +9,104 @@
 
 ## 1. 설치·실행
 
-1. (처음 한 번) `.env.example`을 `.env`로 복사하고 `ANTHROPIC_API_KEY=` 뒤에 API 키를 붙여 넣습니다.
-   - 키가 없어도 실행됩니다. 이때는 자료·숫자 항목(일정표, 예산표, 인원, 만족도 집계·그래프, 사진)만 자동으로 채워지고
-     문장 항목은 `[확인 필요: AI 미연결]`로 표시됩니다.
-2. **`run.bat` 더블클릭** → 브라우저에 `http://localhost:8501` 화면이 열립니다.
+> 이 프로그램은 **내 PC에서만 실행하는 로컬 앱**입니다. 인터넷 서버(Vercel 등)에 올려서 쓰는 구조가 아닙니다.
+> (한컴오피스를 직접 조종하고, 개인정보가 담긴 자료를 PC 밖으로 내보내지 않기 위해서입니다.)
 
-개발자용 명령:
+### 1-1. 준비물 (새 PC에서 처음 한 번)
+
+| 프로그램 | 필수 여부 | 비고 |
+|---|---|---|
+| Windows 10/11 | 필수 | 한컴 자동화(`pywin32`) 때문에 Windows 전용 |
+| [Python 3.12](https://www.python.org/downloads/) | 필수 | 설치할 때 **"Add python.exe to PATH" 체크** |
+| [Git](https://git-scm.com/download/win) | 필수 | 프로젝트 내려받기·올리기용 |
+| Google Chrome | 권장 | `run.bat`이 크롬으로 화면을 엶 (없으면 기본 브라우저) |
+| 한컴오피스 2022 | 권장 | .hwp 읽기, PDF 저장에 사용. 없으면 4장의 대체 경로로 동작 |
+
+### 1-2. 프로젝트 내려받기
+
+PowerShell(또는 명령 프롬프트)에서:
+```
+cd D:\
+git clone https://github.com/LimJongTak/report.git
+cd report
+```
+> 폴더 위치는 어디든 됩니다. 아래 설명은 `D:\report` 기준입니다.
+
+### 1-3. 실행
+
+1. **`run.bat` 더블클릭**
+   - 처음 실행하면 가상환경(`.venv`)을 만들고 필요한 패키지를 설치합니다(몇 분 걸림, 처음 한 번만).
+   - `.env` 파일이 없으면 `.env.example`을 복사해 자동으로 만듭니다.
+   - 몇 초 뒤 **크롬**에 `http://localhost:8501` 화면이 열립니다.
+     "사이트에 연결할 수 없음"이 먼저 보이면 잠시 후 **F5(새로고침)** 하세요.
+2. 종료: 검은 명령 창을 닫거나 그 창에서 `Ctrl + C`.
+
+명령어로 직접 실행하려면:
+```
+cd D:\report
+.venv\Scripts\activate
+streamlit run app.py
+```
+(이 경우 크롬 주소창에 `localhost:8501`을 직접 입력)
+
+### 1-4. AI 기능 켜기 (API 키)
+
+1. https://console.anthropic.com 로그인 → **API Keys → Create Key** → `sk-ant-...` 키 복사
+   (창을 닫으면 다시 볼 수 없으니 바로 복사)
+2. **Billing**에서 결제 수단 등록 후 크레딧 충전 (선불 $5~10 정도면 충분, 다 쓰면 자동으로 멈춤)
+3. `D:\report\.env`를 메모장으로 열어 아래처럼 저장 (띄어쓰기·따옴표 없이)
+   ```
+   ANTHROPIC_API_KEY=sk-ant-여기에키
+   ```
+4. `run.bat` 다시 실행
+
+- 키가 없어도 실행됩니다. 이때는 자료·숫자 항목(일정표, 예산표, 인원, 만족도 집계·그래프, 사진)만 자동으로 채워지고
+  문장 항목은 `[확인 필요: AI 미연결]`로 표시됩니다.
+- **비용**: 사용한 만큼 과금. 기본 모델(`claude-sonnet-5-5`, 입력 100만 토큰당 $2 / 출력 $10) 기준
+  보고서 1건에 대략 $0.2~0.5(300~700원) 정도입니다(자료 양에 따라 다름). 실제 사용액은 콘솔 **Usage**에서 확인.
+  모델은 `config/settings.yaml`의 `model`에서 바꿉니다.
+- `.env`는 Git에 올라가지 않습니다. **PC마다 따로 넣어야 합니다.** 키를 채팅·메일·코드에 붙여 넣지 마세요.
+
+### 1-5. Git에 올라가지 않는 것 (다른 PC로 옮길 때 주의)
+
+개인정보 보호를 위해 아래 파일은 `.gitignore`로 제외되어 있어 `git clone`으로 받아지지 않습니다.
+
+| 경로 | 내용 | 새 PC에서 하는 법 |
+|---|---|---|
+| `.env` | API 키 | 1-4대로 새로 입력 |
+| `projects/` | 진행한 결과보고 작업 전체(입력 자료·초안·결과물) | 필요하면 USB·클라우드로 **폴더째 복사** |
+| `library/examples/*/source.*`, `extracted.md`, `plan.md`, `plan_source.*` | 과거 결과보고 원본과 추출 본문 | 폴더째 복사하거나, 원본 파일로 다시 등록(아래) |
+| `library/templates/*/original.*` | 양식의 원본 파일 | 필요하면 복사 (`template.hwpx`·`schema.yaml`은 Git에 있음) |
+| `.venv/` | 파이썬 가상환경 | `run.bat`이 자동으로 새로 만듦 |
+
+과거 사례를 원본 파일로 다시 등록하는 방법:
+```
+.venv\Scripts\activate
+python scripts/import_library.py --examples <과거보고서 폴더> [--plans <계획안 폴더>]
+```
+> 기존 PC의 `D:\report\projects`와 `D:\report\library` 폴더를 그대로 새 PC의 같은 위치에 덮어쓰면 가장 간단합니다.
+
+### 1-6. 여러 PC에서 번갈아 작업할 때
+
+작업 시작 전 (최신 코드 받기):
+```
+cd D:\report
+git pull
+```
+`requirements.txt`가 바뀌었으면 패키지도 갱신:
+```
+.venv\Scripts\python -m pip install -r requirements.txt
+```
+작업 끝난 후 (변경 올리기):
+```
+git add -A
+git commit -m "변경 내용 요약"
+git push
+```
+> `git add -A`를 해도 `.env`·`projects/`·원본 파일은 `.gitignore` 덕분에 올라가지 않습니다.
+> 처음 push할 때 GitHub 로그인 창이 뜨면 본인 계정으로 로그인하세요.
+
+### 1-7. 개발자용 명령
 ```
 .venv\Scripts\activate
 streamlit run app.py
@@ -85,7 +177,12 @@ src/reportgen/                 ingest · library · analyze · generate · valid
 
 | 증상 | 확인 |
 |---|---|
+| run.bat이 "python을 찾을 수 없음"으로 끝남 | Python 3.12 설치 시 "Add python.exe to PATH" 체크했는지 확인 후 재설치. 설치가 중간에 실패했다면 `.venv` 폴더를 지우고 run.bat 재실행 |
+| 크롬이 안 열림 / "연결할 수 없음" | 검은 창에 오류가 없는지 확인 → 크롬에서 `localhost:8501` 직접 입력 후 F5 |
+| "Port 8501 is already in use" | 이미 켜진 ReportGen 창이 있음. 그 창을 닫고 다시 실행 |
+| `git pull` 후 오류 | `.venv\Scripts\python -m pip install -r requirements.txt`로 패키지 갱신 |
 | "AI 미연결" | `.env`에 `ANTHROPIC_API_KEY` 입력 후 run.bat 재실행 |
+| AI 오류 "credit balance is too low" | 콘솔 Billing에서 크레딧 충전 |
 | 과거 PDF가 "텍스트 없음" | 한글에서 PDF로 인쇄한 파일은 글꼴 정보가 깨져 글자를 읽을 수 없습니다. 원본 .hwp/.hwpx를 등록하거나 API 키를 넣고 다시 등록(비전으로 읽음) |
 | HWP 변환·PDF가 오래 걸리다 실패 | 4장의 한컴 보안 창 확인 |
 | 생성 hwpx가 안 열림 | `work/logs/`와 함께 문의. 텍스트 칸만 채운 안전 모드는 `schema.yaml`에서 해당 표/블록 필드를 지우고 재생성 |
