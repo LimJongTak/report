@@ -8,3 +8,7 @@ projects/*
 library/templates/*/original.*
 library/examples/*/source.*
 tests/_out/
+library/examples/*/extracted.md
+library/examples/*/plan.md
+library/examples/*/plan_source.*
+library/logs/
