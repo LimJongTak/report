@@ -12,3 +12,7 @@ library/examples/*/extracted.md
 library/examples/*/plan.md
 library/examples/*/plan_source.*
 library/logs/
+
+# 로컬 Claude/에이전트 설정
+.agents/
+.claude/
